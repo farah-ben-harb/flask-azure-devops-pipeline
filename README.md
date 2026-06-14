@@ -1,4 +1,4 @@
-# CI/CD Demo Flask App
+# Flask DevOps Automation Mini Project
 
 Application Flask simple pour apprendre un pipeline CI/CD complet avec GitHub Actions, Docker et Docker Hub.
 
@@ -23,7 +23,7 @@ Application Flask simple pour apprendre un pipeline CI/CD complet avec GitHub Ac
 ## Structure du projet
 
 ```text
-ci-cd-demo/
+flask-devops-automation-mini-project/
 ├── app.py
 ├── requirements.txt
 ├── Dockerfile
@@ -98,8 +98,8 @@ Ouvre ensuite:
 ## Lancer avec Docker
 
 ```powershell
-docker build -t ci-cd-demo .
-docker run -p 5000:5000 ci-cd-demo
+docker build -t benharbfarah/ci_cd_pipeline .
+docker run -p 5000:5000 benharbfarah/ci_cd_pipeline
 ```
 
 ## CI/CD GitHub Actions
@@ -107,23 +107,21 @@ docker run -p 5000:5000 ci-cd-demo
 Le workflow `.github/workflows/ci-cd.yml` fait deux choses:
 
 - Il exécute les tests sur chaque `push` et `pull_request`
-- Il construit et pousse l'image Docker sur Docker Hub sur la branche `main`
+- Il construit et pousse l'image Docker sur Docker Hub `benharbfarah/ci_cd_pipeline` sur la branche `main`
 
 ## Configuration GitHub requise
 
 Dans ton dépôt GitHub, ajoute:
 
 - `Secret`: `DOCKERHUB_TOKEN`
-- `Variable`: `DOCKERHUB_USERNAME`
 
 ## Configuration Docker Hub
 
 Créer un compte Docker Hub puis:
 
-1. Crée un repository Docker nommé `ci-cd-demo`
+1. Vérifie que le repository `benharbfarah/ci_cd_pipeline` existe bien
 2. Génère un access token Docker Hub
 3. Ajoute ce token dans GitHub Secrets sous `DOCKERHUB_TOKEN`
-4. Ajoute ton identifiant Docker Hub dans GitHub Variables sous `DOCKERHUB_USERNAME`
 
 ## Schéma du pipeline
 

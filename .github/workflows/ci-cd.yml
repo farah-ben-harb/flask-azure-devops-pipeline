@@ -1,4 +1,4 @@
-name: CI CD Demo
+name: Flask DevOps Automation Mini Project
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
 
 env:
   PYTHON_VERSION: "3.10"
-  IMAGE_NAME: ${{ vars.DOCKERHUB_USERNAME }}/ci-cd-demo
+  IMAGE_NAME: benharbfarah/ci_cd_pipeline
 
 jobs:
   test:
@@ -51,7 +51,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: docker/login-action@v3
         with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
+          username: benharbfarah
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build Docker image
