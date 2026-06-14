@@ -32,10 +32,6 @@ flask-devops-automation-mini-project/
 ├── .github/
 │   └── workflows/
 │       └── ci-cd.yml
-├── docs/
-│   ├── architecture.md
-│   ├── linkedin-description.md
-│   └── cv-description.md
 └── README.md
 ```
 
@@ -127,15 +123,6 @@ Créer un compte Docker Hub puis:
 ## Important
 
 Sans `DOCKERHUB_TOKEN`, le workflow continue d’exécuter les tests et de construire l’image, mais il ne publie pas l’image sur Docker Hub.
-
-## Schéma du pipeline
-
-Voir [`docs/architecture.md`](docs/architecture.md)
-
-## Descriptions projet
-
-- Voir [`docs/linkedin-description.md`](docs/linkedin-description.md)
-- Voir [`docs/cv-description.md`](docs/cv-description.md)
 
 ## Ce que fait le pipeline
 
