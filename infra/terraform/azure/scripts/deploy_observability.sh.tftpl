@@ -25,6 +25,7 @@ systemctl start docker
 
 mkdir -p "$${STACK_ROOT}"/prometheus
 mkdir -p "$${STACK_ROOT}"/alertmanager
+mkdir -p "$${STACK_ROOT}"/alertmanager/templates
 mkdir -p "$${STACK_ROOT}"/blackbox
 mkdir -p "$${STACK_ROOT}"/grafana/provisioning/datasources
 mkdir -p "$${STACK_ROOT}"/grafana/provisioning/dashboards
@@ -49,6 +50,10 @@ EOF_RULES
 cat > "$${STACK_ROOT}/alertmanager/alertmanager.yml" <<'EOF_ALERTMANAGER'
 ${alertmanager_config}
 EOF_ALERTMANAGER
+
+cat > "$${STACK_ROOT}/alertmanager/templates/email.tmpl" <<'EOF_ALERTMANAGER_TEMPLATE'
+${alertmanager_template}
+EOF_ALERTMANAGER_TEMPLATE
 
 cat > "$${STACK_ROOT}/blackbox/blackbox.yml" <<'EOF_BLACKBOX'
 ${blackbox_config}

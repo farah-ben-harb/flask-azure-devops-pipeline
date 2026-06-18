@@ -10,6 +10,8 @@ groups:
         annotations:
           summary: "Flask app target is down"
           description: "Prometheus cannot scrape the Flask app /metrics endpoint."
+          impact: "Users cannot reach the application and dashboards lose live app metrics."
+          action: "Check the Flask container, recent deploys, and the /metrics endpoint on port 80."
 
       - alert: FlaskHealthCheckFailed
         expr: probe_success{job="blackbox-flask-health"} == 0
@@ -20,6 +22,8 @@ groups:
         annotations:
           summary: "Flask health endpoint failed"
           description: "The /health endpoint is not returning a healthy response."
+          impact: "The application may be partially or completely unavailable to users."
+          action: "SSH to the VM, inspect the Flask container logs, and verify the app response locally."
 
       - alert: NodeExporterDown
         expr: up{job="node_exporter"} == 0
@@ -30,6 +34,8 @@ groups:
         annotations:
           summary: "Node exporter is down"
           description: "Prometheus cannot reach the node exporter on the VM."
+          impact: "VM CPU, memory, and disk metrics stop updating in Grafana."
+          action: "Check the node_exporter container and the host Docker runtime."
 
       - alert: CadvisorDown
         expr: up{job="cadvisor"} == 0
@@ -40,6 +46,8 @@ groups:
         annotations:
           summary: "cAdvisor is down"
           description: "Container metrics are no longer being scraped."
+          impact: "Container-level resource usage disappears from dashboards."
+          action: "Restart cAdvisor and confirm Docker socket access is still working."
 
       - alert: VMCPUHigh
         expr: 100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
@@ -50,6 +58,8 @@ groups:
         annotations:
           summary: "High CPU usage on the VM"
           description: "The VM CPU usage has been above 80% for 5 minutes."
+          impact: "The VM may slow down, causing the app and exporters to respond more slowly."
+          action: "Inspect the top processes, container logs, and recent deploy activity."
 
       - alert: VMMemoryHigh
         expr: ((node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes) * 100 > 85
@@ -60,6 +70,8 @@ groups:
         annotations:
           summary: "High memory usage on the VM"
           description: "The VM memory usage has been above 85% for 5 minutes."
+          impact: "The VM can start swapping, which increases latency and instability."
+          action: "Check memory-heavy containers or processes and free resources if needed."
 
       - alert: VMDiskHigh
         expr: ((node_filesystem_size_bytes{fstype!~"tmpfs|squashfs",mountpoint="/"} - node_filesystem_avail_bytes{fstype!~"tmpfs|squashfs",mountpoint="/"}) / node_filesystem_size_bytes{fstype!~"tmpfs|squashfs",mountpoint="/"}) * 100 > 85
@@ -70,3 +82,5 @@ groups:
         annotations:
           summary: "Low disk space on the VM"
           description: "The root filesystem has less than 15% free space."
+          impact: "Docker pulls, logs, and app writes can fail when disk space runs out."
+          action: "Prune unused Docker images, rotate logs, and expand the disk if needed."
