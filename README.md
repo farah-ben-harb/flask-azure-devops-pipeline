@@ -14,6 +14,8 @@ This repository is a hands-on DevOps learning project. It shows how to:
 - deploy the Docker image onto an existing Azure Linux VM with Terraform
 - observe the app and VM with Prometheus, Grafana, Alertmanager, node_exporter, cAdvisor, and blackbox exporter
 
+For a detailed end-to-end explanation, see `docs/project-complete-guide.md`.
+
 ## Tech Stack
 
 - Python 3.10
