@@ -133,23 +133,6 @@ docker run -p 5000:5000 benharbfarah/ci_cd_pipeline
 - Grafana: SSH tunnel to `localhost:3000`
 - Prometheus: SSH tunnel to `localhost:9090`
 
-Grafana login:
-
-- user: `admin`
-- password: `ChangeMe123!`
-
-## Required GitHub Secrets and Variables
-
-Secrets:
-
-- `DOCKERHUB_TOKEN`
-- `AZURE_SUBSCRIPTION_ID`
-
-Variables:
-
-- `AZURE_RESOURCE_GROUP`
-- `AZURE_VM_NAME`
-
 ## Azure Notes
 
 - the VM must be Linux
@@ -166,15 +149,6 @@ Variables:
 5. confirm Terraform redeploys the VM extension
 6. open the app in the browser and verify `/health`
 7. open Grafana and verify dashboards update after a few requests
-
-## Common Issues
-
-- `publickey` SSH error: check the SSH key path and permissions
-- `node` missing on the runner: install Node.js on `myVM`
-- `docker compose` missing: install the Compose v2 plugin
-- `404 /metrics`: the VM is still running an older image
-- `Connection refused` on port 80: the Flask container is not running
-- Terraform `403`: the VM identity does not have the correct RBAC role
 
 ## Project Goal
 
