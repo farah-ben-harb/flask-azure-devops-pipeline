@@ -6,7 +6,7 @@ This guide sets up option 2: a GitHub Actions self-hosted runner on your existin
 
 - no Microsoft Entra app registration required
 - GitHub Actions runs directly on the VM
-- Terraform uses the VM managed identity through `az login --identity`
+- Terraform uses the VM managed identity directly through the AzureRM provider
 
 ## 1) Enable the VM managed identity
 
@@ -68,19 +68,7 @@ Back in GitHub:
 - the runner should appear as `Idle`
 - the label should include `azure-vm`
 
-## 6) Verify Azure auth on the VM
-
-On the VM:
-
-```bash
-az login --identity
-az account set --subscription acec6a34-0f38-4da1-9e5b-6335ff6efc80
-az account show
-```
-
-If this fails, the VM identity is not enabled or does not have the right role.
-
-## 7) Test the pipeline
+## 6) Test the pipeline
 
 1. Push code to `main`
 2. GitHub Actions should run tests and build the Docker image

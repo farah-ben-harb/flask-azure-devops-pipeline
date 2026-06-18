@@ -207,7 +207,7 @@ The workflow in `.github/workflows/terraform-azure.yml`:
 1. checks out the repository
 2. installs Terraform
 3. runs on a self-hosted runner hosted on your Azure VM
-4. logs into Azure with the VM managed identity
+4. lets Terraform authenticate with the VM managed identity
 5. runs `terraform fmt`
 6. runs `terraform init`
 7. runs `terraform validate`
