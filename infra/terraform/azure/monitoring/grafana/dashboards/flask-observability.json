@@ -354,6 +354,48 @@
       ],
       "title": "Flask health check",
       "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 8,
+        "y": 16
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(rate(flask_http_requests_total{status_code=~\"4..|5..\"}[5m]))",
+          "refId": "A"
+        }
+      ],
+      "title": "Flask error rate",
+      "type": "timeseries"
     }
   ],
   "refresh": "10s",
@@ -373,6 +415,6 @@
   "timezone": "browser",
   "title": "Flask Observability",
   "uid": "flask-observability",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
