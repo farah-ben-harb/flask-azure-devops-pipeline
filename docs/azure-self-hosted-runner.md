@@ -29,7 +29,19 @@ In Azure Portal:
 
 If you want a more restrictive setup later, you can try `Virtual Machine Contributor`, but `Contributor` is simpler for learning.
 
-## 3) Create the GitHub self-hosted runner
+## 3) Install prerequisites on the VM
+
+GitHub Actions JavaScript-based actions need Node.js on the runner host.
+
+```bash
+sudo apt-get update
+sudo apt-get install -y nodejs npm unzip
+node -v
+```
+
+If `node -v` fails, install Node.js from the official NodeSource or Ubuntu packages before continuing.
+
+## 4) Create the GitHub self-hosted runner
 
 In GitHub:
 
@@ -42,7 +54,7 @@ In GitHub:
 
 GitHub will show you a registration token and the exact commands to run.
 
-## 4) Install the runner on the VM
+## 5) Install the runner on the VM
 
 SSH into the VM:
 
@@ -61,14 +73,14 @@ sudo ./svc.sh install
 sudo ./svc.sh start
 ```
 
-## 5) Verify the runner
+## 6) Verify the runner
 
 Back in GitHub:
 
 - the runner should appear as `Idle`
 - the label should include `azure-vm`
 
-## 6) Test the pipeline
+## 7) Test the pipeline
 
 1. Push code to `main`
 2. GitHub Actions should run tests and build the Docker image
