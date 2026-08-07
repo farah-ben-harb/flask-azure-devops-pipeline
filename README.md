@@ -1,107 +1,65 @@
 # Flask Azure DevOps Pipeline
 
-Automated Flask application deployment on Azure with GitHub Actions, Docker, Terraform, and a full observability stack.
+Production-style Flask application deployed to Azure with GitHub Actions, Docker, Terraform, and an observability stack.
 
-## Summary
+## Overview
 
-This project demonstrates a realistic Cloud & DevOps workflow:
+This repository demonstrates a realistic cloud delivery workflow:
 
-- develop a Flask application
-- validate it with Pytest
-- package it as a Docker image
-- publish the image to Docker Hub
-- deploy automatically to an existing Azure Linux VM
-- monitor the app and host with Prometheus and Grafana
+1. develop a Flask application
+2. validate it with tests
+3. package it as a container image
+4. publish the image to Docker Hub
+5. deploy to an Azure Linux VM
+6. monitor the system with Prometheus and Grafana
 
-It is designed as a portfolio project for CI/CD, Infrastructure as Code, and observability practice.
+The goal is to show practical CI/CD, infrastructure as code, and observability skills rather than a toy demo.
 
-## Core Features
+## Architecture
 
-- Flask app with `/`, `/health`, and `/metrics`
-- automated tests with Pytest
-- Docker image build and Docker Hub push
-- GitHub Actions CI/CD pipeline
-- Terraform-based Azure deployment
-- Prometheus, Grafana, Alertmanager, node_exporter, cAdvisor, and blackbox exporter
+```mermaid
+flowchart LR
+    Dev[Developer] --> GH[GitHub]
+    GH --> CI[GitHub Actions CI]
+    CI --> Tests[Pytest]
+    CI --> Build[Docker Build]
+    Build --> Hub[Docker Hub]
+    Hub --> Azure[Azure Linux VM]
+    Azure --> App[Flask App]
+    Azure --> Obs[Prometheus / Grafana / Alertmanager]
+```
 
 ## Tech Stack
 
-- Python 3.10
-- Flask
-- Pytest
-- Docker
-- GitHub Actions
-- Docker Hub
-- Terraform
-- Azure VM
-- Prometheus
-- Grafana
-- Alertmanager
-- node_exporter
-- cAdvisor
-- blackbox exporter
+- Backend: Python, Flask, Pytest
+- Containers: Docker, Docker Compose, Docker Hub
+- Infrastructure: Terraform, Azure VM
+- CI/CD: GitHub Actions
+- Monitoring: Prometheus, Grafana, Alertmanager, node_exporter, cAdvisor, blackbox exporter
 
-## Repository Layout
+## Repository Structure
 
 ```text
-flask-azure-devops-pipeline/
+.
 ├── app.py
 ├── requirements.txt
 ├── Dockerfile
 ├── tests/
-│   └── test_app.py
 ├── .github/
 │   └── workflows/
-│       ├── ci-cd.yml
-│       └── terraform-azure.yml
 ├── infra/
 │   └── terraform/
 │       └── azure/
-│           ├── main.tf
-│           ├── locals.tf
-│           ├── outputs.tf
-│           ├── variables.tf
-│           ├── versions.tf
-│           ├── terraform.tfvars.example
-│           ├── scripts/
-│           │   └── deploy_observability.sh.tftpl
-│           └── monitoring/
-│               ├── docker-compose.yml
-│               ├── prometheus/
-│               ├── alertmanager/
-│               ├── blackbox/
-│               └── grafana/
 └── docs/
 ```
 
-## CI/CD Flow
+## Getting Started
 
-The main workflow in `.github/workflows/ci-cd.yml` runs on every push and pull request:
+### Prerequisites
 
-1. run Pytest
-2. validate the monitoring configuration
-3. build the Docker image
-4. push the image to Docker Hub on `main`
-5. redeploy the Azure VM via Terraform on the self-hosted runner
-
-## Terraform Flow
-
-The Terraform workflow in `.github/workflows/terraform-azure.yml`:
-
-1. runs on the self-hosted runner installed on `myVM`
-2. authenticates with the VM managed identity
-3. formats, initializes, validates, plans, and applies Terraform
-4. updates the VM extension that deploys the stack
-
-## Observability
-
-The observability stack runs on the same VM as the Flask app.
-
-- Prometheus scrapes `/metrics`, `node_exporter`, `cAdvisor`, and `/health`
-- Grafana visualizes request rate, latency, and VM metrics
-- Alertmanager is prepared to forward alerts by email
-
-## Quick Start
+- Python 3.10+
+- Docker
+- Terraform
 
 ### Local development
 
@@ -126,37 +84,45 @@ docker build -t benharbfarah/ci_cd_pipeline .
 docker run -p 5000:5000 benharbfarah/ci_cd_pipeline
 ```
 
-## Azure Access
+## CI/CD
 
-- app host: `http://<vm-public-ip>/`
-- health check: `http://<vm-public-ip>/health`
-- Grafana: SSH tunnel to `localhost:3000`
-- Prometheus: SSH tunnel to `localhost:9090`
+The primary workflow in `.github/workflows/ci-cd.yml` is designed to:
+
+1. run tests
+2. validate monitoring configuration
+3. build the Docker image
+4. push to Docker Hub on `main`
+5. redeploy the Azure VM stack
+
+The Terraform workflow in `.github/workflows/terraform-azure.yml`:
+
+1. runs on the self-hosted Azure runner
+2. formats and validates Terraform
+3. produces a plan for pull requests
+4. applies the plan only on manual approval
+
+## Observability
+
+The monitoring stack runs alongside the application on the Azure VM.
+
+- Prometheus scrapes application and host metrics
+- Grafana visualizes latency, traffic, and system health
+- Alertmanager is ready for notification routing
 
 ## Azure Notes
 
 - the VM must be Linux
-- the VM must have a system-assigned managed identity
-- that identity must have `Contributor` on `myResourceGroupTerraform`
-- Grafana stays private and is accessed through SSH tunneling
+- the VM must use a system-assigned managed identity
+- that identity needs `Contributor` on `myResourceGroupTerraform`
+- Grafana is intended to stay private and be accessed through SSH tunneling
 
-## Testing the Pipeline
+## Validation
+
+Typical validation flow:
 
 1. push a change to a feature branch
-2. verify tests run in GitHub Actions
-3. open a pull request and confirm validation passes
-4. push to `main` and confirm Docker Hub gets a new image
-5. confirm Terraform redeploys the VM extension
-6. open the app in the browser and verify `/health`
-7. open Grafana and verify dashboards update after a few requests
-
-## Project Goal
-
-This repository is a practical example of a modern Cloud & DevOps delivery pipeline:
-
-- source control with GitHub
-- automated CI with GitHub Actions
-- containerization with Docker
-- infrastructure as code with Terraform
-- deployment on Azure
-- monitoring with Prometheus and Grafana
+2. open a pull request and confirm CI passes
+3. merge to `main`
+4. confirm Docker Hub receives the new image
+5. confirm Terraform updates the VM extension
+6. verify `/health` and `/metrics`
