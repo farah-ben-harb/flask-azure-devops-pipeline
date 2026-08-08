@@ -126,3 +126,17 @@ Typical validation flow:
 4. confirm Docker Hub receives the new image
 5. confirm Terraform updates the VM extension
 6. verify `/health` and `/metrics`
+
+## Branching and Commits
+
+- Use branches such as `feat/<area>`, `fix/<area>`, `docs/<area>`, or `ci/<area>`
+- Keep commits small and focused
+- Prefer Conventional Commits such as `ci(github): tighten workflow timeouts`
+- Avoid vague messages like `update`, `test`, or `final`
+
+## Contributing
+
+- Open pull requests from feature branches
+- Include test evidence or workflow output in the PR description
+- Keep infrastructure and application changes separate when possible
+- Do not commit secrets or environment-specific values
