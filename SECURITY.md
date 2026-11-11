@@ -20,3 +20,11 @@ If you find a security problem:
 - Never commit real `.env` files
 - Rotate any secret that may have been exposed
 
+## Previously exposed SMTP credential
+
+The Alertmanager configuration previously contained an SMTP credential. The
+configuration now reads SMTP values from protected Terraform variables and
+renders them only on the target VM. The owner of the SMTP account must still
+revoke and replace the exposed credential; removing it from the current file
+does not remove it from Git history.
+

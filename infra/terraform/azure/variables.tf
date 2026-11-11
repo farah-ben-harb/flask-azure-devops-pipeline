@@ -17,7 +17,7 @@ variable "container_name" {
 variable "docker_image" {
   description = "Docker image to deploy on the VM."
   type        = string
-  default     = "benharbfarah/ci_cd_pipeline:latest"
+  default     = "benharbfarah/ci_cd_pipeline:replace-with-immutable-tag"
 }
 
 variable "host_port" {
@@ -53,5 +53,27 @@ variable "grafana_admin_user" {
 variable "grafana_admin_password" {
   description = "Grafana admin password for the demo stack."
   type        = string
-  default     = "ChangeMe123!"
+  sensitive   = true
+}
+
+variable "smtp_from" {
+  description = "Sender address used by Alertmanager."
+  type        = string
+}
+
+variable "smtp_auth_username" {
+  description = "SMTP username used by Alertmanager."
+  type        = string
+  sensitive   = true
+}
+
+variable "smtp_auth_password" {
+  description = "SMTP password or app password used by Alertmanager."
+  type        = string
+  sensitive   = true
+}
+
+variable "alert_email" {
+  description = "Recipient address for Alertmanager notifications."
+  type        = string
 }

@@ -15,6 +15,10 @@ locals {
     "APP_IMAGE=${var.docker_image}",
     "GRAFANA_ADMIN_USER=${var.grafana_admin_user}",
     "GRAFANA_ADMIN_PASSWORD=${var.grafana_admin_password}",
+    "SMTP_FROM=${var.smtp_from}",
+    "SMTP_AUTH_USERNAME=${var.smtp_auth_username}",
+    "SMTP_AUTH_PASSWORD=${var.smtp_auth_password}",
+    "ALERT_EMAIL=${var.alert_email}",
     ""
   ])
 
