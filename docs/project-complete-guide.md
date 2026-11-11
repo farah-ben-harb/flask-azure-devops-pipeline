@@ -321,7 +321,7 @@ On y accède avec un tunnel SSH vers `localhost:3000`.
 ### Connexion
 
 - user : `admin`
-- password : `ChangeMe123!`
+- password : supplied through a protected secret, never committed
 
 ### Ce qu’on voit dans le dashboard
 
@@ -384,14 +384,14 @@ docker run -p 5000:5000 benharbfarah/ci_cd_pipeline
 Si ta clé est sur Linux/Cloud Shell :
 
 ```bash
-chmod 600 /home/farah/newkey.pem
-ssh -i /home/farah/newkey.pem azureuser@4.223.128.175
+ chmod 600 /path/to/your-key.pem
+ ssh -i /path/to/your-key.pem azureuser@<vm-public-ip>
 ```
 
 Si tu es sur Windows PowerShell :
 
 ```powershell
-ssh -i "C:\Users\Farah\Downloads\newkey.pem" azureuser@4.223.128.175
+ssh -i "C:\path\to\your-key.pem" azureuser@<vm-public-ip>
 ```
 
 ### Vérifier que tu es sur la VM
@@ -426,7 +426,7 @@ curl http://localhost:9090/-/ready
 Depuis ton PC, via tunnel SSH :
 
 ```bash
-ssh -i "C:\Users\Farah\Downloads\newkey.pem" -L 9090:127.0.0.1:9090 azureuser@4.223.128.175
+ssh -i "C:\path\to\your-key.pem" -L 9090:127.0.0.1:9090 azureuser@<vm-public-ip>
 ```
 
 Puis ouvrir :
@@ -440,7 +440,7 @@ http://localhost:9090
 Depuis ton PC, via tunnel SSH :
 
 ```bash
-ssh -i "C:\Users\Farah\Downloads\newkey.pem" -L 3000:127.0.0.1:3000 azureuser@4.223.128.175
+ssh -i "C:\path\to\your-key.pem" -L 3000:127.0.0.1:3000 azureuser@<vm-public-ip>
 ```
 
 Puis ouvrir :
@@ -452,7 +452,7 @@ http://localhost:3000
 Login Grafana :
 
 - user : `admin`
-- password : `ChangeMe123!`
+- password : supplied through a protected secret, never committed
 
 ## 16) Comment ouvrir Grafana et Prometheus dans le navigateur
 
@@ -460,7 +460,7 @@ Login Grafana :
 
 1. Ouvre un tunnel SSH vers `localhost:3000`
 2. Ouvre `http://localhost:3000`
-3. Connecte-toi avec `admin / ChangeMe123!`
+3. Connecte-toi avec the protected Grafana credentials configured outside Git.
 
 ### Prometheus
 
