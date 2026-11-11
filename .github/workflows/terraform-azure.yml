@@ -38,8 +38,33 @@ env:
   TF_VAR_alert_email: ${{ secrets.ALERT_EMAIL || 'oncall@example.invalid' }}
 
 jobs:
+  static-validation:
+    name: Terraform static validation
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform fmt
+        working-directory: ${{ env.TF_ROOT }}
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init without backend
+        working-directory: ${{ env.TF_ROOT }}
+        run: terraform init -backend=false
+
+      - name: Terraform validate
+        working-directory: ${{ env.TF_ROOT }}
+        run: terraform validate
+
   plan:
     name: Terraform plan
+    if: github.event_name == 'workflow_dispatch'
     runs-on: [self-hosted, linux, x64, azure-vm]
     timeout-minutes: 30
     steps:
