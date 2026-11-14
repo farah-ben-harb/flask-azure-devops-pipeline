@@ -9,7 +9,7 @@ COMPOSE_PROJECT_NAME="${compose_project_name}"
 echo "[deploy] Preparing observability stack in $${STACK_ROOT}"
 
 apt-get update -y
-apt-get install -y docker.io curl ca-certificates
+apt-get install -y docker.io curl ca-certificates gettext-base
 
 # Install Docker Compose v2 directly to avoid distro package availability issues.
 mkdir -p /usr/local/lib/docker/cli-plugins
@@ -50,6 +50,20 @@ EOF_RULES
 cat > "$${STACK_ROOT}/alertmanager/alertmanager.yml" <<'EOF_ALERTMANAGER'
 ${alertmanager_config}
 EOF_ALERTMANAGER
+
+# Render credentials only on the target VM from the protected environment file.
+set -a
+. "$${STACK_ROOT}/.env"
+set +a
+: "$${SMTP_FROM:?SMTP_FROM is required}"
+: "$${SMTP_AUTH_USERNAME:?SMTP_AUTH_USERNAME is required}"
+: "$${SMTP_AUTH_PASSWORD:?SMTP_AUTH_PASSWORD is required}"
+: "$${ALERT_EMAIL:?ALERT_EMAIL is required}"
+envsubst '$${SMTP_FROM} $${SMTP_AUTH_USERNAME} $${SMTP_AUTH_PASSWORD} $${ALERT_EMAIL}' \
+  < "$${STACK_ROOT}/alertmanager/alertmanager.yml" \
+  > "$${STACK_ROOT}/alertmanager/alertmanager.rendered.yml"
+mv "$${STACK_ROOT}/alertmanager/alertmanager.rendered.yml" \
+  "$${STACK_ROOT}/alertmanager/alertmanager.yml"
 
 cat > "$${STACK_ROOT}/alertmanager/templates/email.tmpl" <<'EOF_ALERTMANAGER_TEMPLATE'
 ${alertmanager_template}

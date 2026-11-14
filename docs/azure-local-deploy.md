@@ -39,12 +39,12 @@ Edit `terraform.tfvars` and make sure it contains:
 resource_group_name = "myResourceGroupTerraform"
 vm_name             = "myVM"
 container_name      = "flask-devops-app"
-docker_image        = "benharbfarah/ci_cd_pipeline:latest"
+docker_image        = "benharbfarah/ci_cd_pipeline:replace-with-immutable-tag"
 host_port           = 80
 app_port            = 5000
 compose_project_name = "flask-observability"
 grafana_admin_user   = "admin"
-grafana_admin_password = "ChangeMe123!"
+grafana_admin_password = "set-outside-git"
 ```
 
 4. Initialize Terraform.

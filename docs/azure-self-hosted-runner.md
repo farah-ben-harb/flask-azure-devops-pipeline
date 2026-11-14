@@ -60,7 +60,7 @@ GitHub will show you a registration token and the exact commands to run.
 SSH into the VM:
 
 ```bash
-ssh -i /home/farah/newkey.pem azureuser@4.223.128.175
+ssh -i /path/to/your-key.pem azureuser@<vm-public-ip>
 ```
 
 Then run the commands GitHub shows you. The flow is usually:
