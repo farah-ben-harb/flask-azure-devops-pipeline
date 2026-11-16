@@ -9,8 +9,8 @@ This repository demonstrates a realistic cloud delivery workflow:
 1. develop a Flask application
 2. validate it with tests
 3. package it as a container image
-4. publish the image to Docker Hub
-5. deploy to an Azure Linux VM
+4. optionally publish a versioned image to Docker Hub through a manual workflow dispatch
+5. optionally deploy to an Azure Linux VM through a protected manual workflow dispatch
 6. monitor the system with Prometheus and Grafana
 
 The goal is to show practical CI/CD, infrastructure as code, and observability skills rather than a toy demo.
@@ -91,15 +91,19 @@ The primary workflow in `.github/workflows/ci-cd.yml` is designed to:
 1. run tests
 2. validate monitoring configuration
 3. build the Docker image
-4. push to Docker Hub on `main`
-5. redeploy the Azure VM stack
+4. publish only after a manual dispatch from `main` with `publish=true`
+5. deploy only after a manual dispatch from `main` with `deploy=true` and protected environment secrets
 
 The Terraform workflow in `.github/workflows/terraform-azure.yml`:
 
 1. runs on the self-hosted Azure runner
 2. formats and validates Terraform
 3. produces a plan for pull requests
-4. applies the plan only on manual approval
+4. applies the plan only on manual dispatch using the protected `production` environment
+
+No cloud deployment or image publication is implied by a normal push or pull
+request. SMTP, Grafana and Azure values must be supplied through protected
+secrets or an ignored local `.tfvars` file; they must never be committed.
 
 ## Observability
 
@@ -123,8 +127,8 @@ Typical validation flow:
 1. push a change to a feature branch
 2. open a pull request and confirm CI passes
 3. merge to `main`
-4. confirm Docker Hub receives the new image
-5. confirm Terraform updates the VM extension
+4. manually publish the selected immutable image tag, if required
+5. manually apply Terraform only after reviewing the plan
 6. verify `/health` and `/metrics`
 
 ## Branching and Commits
