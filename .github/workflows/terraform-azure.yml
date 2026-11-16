@@ -31,10 +31,40 @@ env:
   ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   TF_VAR_resource_group_name: myResourceGroupTerraform
   TF_VAR_vm_name: myVM
+  TF_VAR_grafana_admin_password: ${{ secrets.GRAFANA_ADMIN_PASSWORD || 'ci-only-placeholder' }}
+  TF_VAR_smtp_from: ${{ secrets.SMTP_FROM || 'alerts@example.invalid' }}
+  TF_VAR_smtp_auth_username: ${{ secrets.SMTP_AUTH_USERNAME || 'ci-only-placeholder' }}
+  TF_VAR_smtp_auth_password: ${{ secrets.SMTP_AUTH_PASSWORD || 'ci-only-placeholder' }}
+  TF_VAR_alert_email: ${{ secrets.ALERT_EMAIL || 'oncall@example.invalid' }}
 
 jobs:
+  static-validation:
+    name: Terraform static validation
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform fmt
+        working-directory: ${{ env.TF_ROOT }}
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init without backend
+        working-directory: ${{ env.TF_ROOT }}
+        run: terraform init -backend=false
+
+      - name: Terraform validate
+        working-directory: ${{ env.TF_ROOT }}
+        run: terraform validate
+
   plan:
     name: Terraform plan
+    if: github.event_name == 'workflow_dispatch'
     runs-on: [self-hosted, linux, x64, azure-vm]
     timeout-minutes: 30
     steps:
@@ -57,17 +87,6 @@ jobs:
         working-directory: ${{ env.TF_ROOT }}
         run: terraform init
 
-      - name: Import VM extension into state if needed
-        working-directory: ${{ env.TF_ROOT }}
-        run: |
-          if terraform state list 2>/dev/null | grep -q '^azurerm_virtual_machine_extension.deploy_app$'; then
-            echo "VM extension already tracked in state"
-          else
-            terraform import \
-              azurerm_virtual_machine_extension.deploy_app \
-              "/subscriptions/${ARM_SUBSCRIPTION_ID}/resourceGroups/${TF_VAR_resource_group_name}/providers/Microsoft.Compute/virtualMachines/${TF_VAR_vm_name}/extensions/${TF_VAR_vm_name}-custom-script"
-          fi
-
       - name: Terraform validate
         working-directory: ${{ env.TF_ROOT }}
         run: terraform validate
@@ -88,6 +107,7 @@ jobs:
     name: Terraform apply
     needs: plan
     if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'apply' }}
+    environment: production
     runs-on: [self-hosted, linux, x64, azure-vm]
     timeout-minutes: 30
     steps:
@@ -130,6 +150,15 @@ jobs:
         with:
           name: terraform-plan
           path: ${{ env.TF_ROOT }}
+
+      - name: Require protected deployment secrets
+        shell: bash
+        run: |
+          test "$TF_VAR_grafana_admin_password" != "ci-only-placeholder"
+          test "$TF_VAR_smtp_auth_username" != "ci-only-placeholder"
+          test "$TF_VAR_smtp_auth_password" != "ci-only-placeholder"
+          test "$TF_VAR_smtp_from" != "alerts@example.invalid"
+          test "$TF_VAR_alert_email" != "oncall@example.invalid"
 
       - name: Terraform apply
         working-directory: ${{ env.TF_ROOT }}
