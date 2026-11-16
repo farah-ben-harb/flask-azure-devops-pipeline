@@ -1,6 +1,12 @@
 resource_group_name = "myResourceGroupTerraform"
 vm_name             = "YOUR_VM_NAME"
 container_name      = "flask-devops-app"
-docker_image        = "benharbfarah/ci_cd_pipeline:latest"
+docker_image        = "benharbfarah/ci_cd_pipeline:replace-with-immutable-tag"
 host_port           = 80
 app_port            = 5000
+# Provide these values through a protected CI environment or an ignored tfvars file.
+# grafana_admin_password = "set-outside-git"
+# smtp_from              = "alerts@example.invalid"
+# smtp_auth_username     = "set-outside-git"
+# smtp_auth_password     = "set-outside-git"
+# alert_email            = "oncall@example.invalid"
